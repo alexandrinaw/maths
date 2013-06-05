@@ -39,12 +39,13 @@ function tokenize(input, inProgressToken) {
 }
 //takes an array of numbers/operators and creates a multi-dimensional array when there are parenthesis
 function formatArray(lexedArray) {
-	var formattedArray = [];
-	var currentElement = lexedArray[0];
-	var remainder = lexedArray.slice(1);
 	if (lexedArray.length==0) {
 		return [];
   }
+
+	var formattedArray = [];
+	var currentElement = lexedArray[0];
+	var remainder = lexedArray.slice(1);
 
 	if (currentElement==="(") {
 		var lastIndex = lastIndexOf(")", remainder);
