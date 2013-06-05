@@ -12,30 +12,23 @@ function removeWhitespace(input) {
   }
 };
 
-function tokenize(input, inProgressToken) {
-	if (inProgressToken === undefined) {
-		inProgressToken="";
-  }
+var isPartOfMultiCharToken = function(charStr) {
+  return charStr !== undefined && (!isNaN(charStr) || charStr === ".");
+};
 
-	var current = input[0];
-	var remainder = input.slice(1);
-	if(input==="" && inProgressToken==="") {
-	  //end: no more input, no integer in progress
-		return [];
-	} else if(input==="" && inProgressToken!=="") {
-	  //end: no more input, but need to write current integer in progress
-		return [inProgressToken];
-  } else if(input!==""&& (!isNaN(current)|| current===".")) {
-    //mid: the input exists and current = is a number (or a .)
-		return tokenize(remainder, inProgressToken + current);
-	} else if(input!==""&& isNaN(current)){
-    //mid: input exists and current is not a number
-		if(inProgressToken.length!==0) {
-			return [inProgressToken].concat(lex(input, ""));
-    } else if(inProgressToken.length===0) {
-			return [current].concat(tokenize(remainder, ""));
+function tokenize(input, inProgressToken) {
+	if (input.length === 0) {
+    return [];
+  } else if (isPartOfMultiCharToken(input[0])) {
+    inProgressToken = (inProgressToken || "") + input[0];
+    if (isPartOfMultiCharToken(input[1])) {
+		  return tokenize(input.slice(1), inProgressToken);
+    } else {
+		  return [inProgressToken].concat(tokenize(input.slice(1)));
     }
-	}
+  } else {
+    return [input[0]].concat(tokenize(input.slice(1)));
+  }
 }
 //takes an array of numbers/operators and creates a multi-dimensional array when there are parenthesis
 function formatArray(lexedArray) {
