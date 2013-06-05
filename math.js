@@ -40,6 +40,7 @@ function formatArray(lexedArray) {
 	}
 	return([currentElement].concat(formatArray(remainder)));
 }
+
 //helper fn for formatArray/parenthesis search
 function lastIndexOf(number, list) {
 	var listCopy = list.slice(0);
@@ -47,6 +48,36 @@ function lastIndexOf(number, list) {
         var current = listCopy.pop();
         if (current==number) return listCopy.length;
         else return lastIndexOf(number, listCopy);
+}
+
+function orderOfOps(formattedArray, inProgressToken) {
+	if (arguments.length==1)
+		inProgressToken=[];
+	var input = formattedArray[0];
+	var remainder = formattedArray.slice(1);
+	if(Array.isArray(input))
+		return [orderOfOps(input)];
+	//end: no more input, no integer in progress	
+	if((input===""|| input==undefined) && inProgressToken.length==0)
+		return []; 
+	//end: input exists but no more remainder
+	else if(input!=="" && remainder=="")
+		return [input]; 
+	//mid: the input exists and current = is a number 
+	else if(input!==""&& !isNaN(input))
+		return orderOfOps(remainder, inProgressToken.concat([input]));
+	//mid: input exists and current is not a number
+	else if(input!==""&& isNaN(input)){
+		if(input=="*" || input =="/") {
+			var token = [inProgressToken.concat(input).concat([remainder[0]])];
+			remainder = remainder.slice(1);
+			return token.concat(orderOfOps(remainder));
+		}
+		if(input=="+" || input =="-"){
+			return inProgressToken.concat(input).concat(orderOfOps(remainder));
+		}			
+	}
+
 }
 
 // takes a multi-dimensional array of numbers/operators and performs calculations, returning the result
@@ -82,3 +113,4 @@ function doMath(formattedInputArray) {
 exports.lex=lex;
 exports.doMath=doMath;
 exports.formatArray=formatArray;
+exports.orderOfOps=orderOfOps;
