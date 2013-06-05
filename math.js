@@ -13,25 +13,28 @@ function removeWhitespace(input) {
 };
 
 function tokenize(input, inProgressToken) {
-	if (inProgressToken === undefined)
+	if (inProgressToken === undefined) {
 		inProgressToken="";
+  }
+
 	var current = input[0];
-	var remainder = input.slice(1);		
-	//end: no more input, no integer in progress	
-	if(input==="" && inProgressToken==="")
-		return []; 
-	//end: no more input, but need to write current integer in progress
-	else if(input==="" && inProgressToken!=="")
+	var remainder = input.slice(1);
+	if(input==="" && inProgressToken==="") {
+	  //end: no more input, no integer in progress
+		return [];
+	} else if(input==="" && inProgressToken!=="") {
+	  //end: no more input, but need to write current integer in progress
 		return [inProgressToken];
-	//mid: the input exists and current = is a number (or a .) 
-	else if(input!==""&& (!isNaN(current)|| current==="."))
+  } else if(input!==""&& (!isNaN(current)|| current===".")) {
+    //mid: the input exists and current = is a number (or a .)
 		return tokenize(remainder, inProgressToken + current);
-	//mid: input exists and current is not a number
-	else if(input!==""&& isNaN(current)){
-		if(inProgressToken.length!==0)
+	} else if(input!==""&& isNaN(current)){
+    //mid: input exists and current is not a number
+		if(inProgressToken.length!==0) {
 			return [inProgressToken].concat(lex(input, ""));
-		else if(inProgressToken.length===0)
+    } else if(inProgressToken.length===0) {
 			return [current].concat(tokenize(remainder, ""));
+    }
 	}
 }
 //takes an array of numbers/operators and creates a multi-dimensional array when there are parenthesis
@@ -39,10 +42,12 @@ function formatArray(lexedArray) {
 	var formattedArray = [];
 	var currentElement = lexedArray[0];
 	var remainder = lexedArray.slice(1);
-	if (lexedArray.length==0)
+	if (lexedArray.length==0) {
 		return [];
-	if (currentElement==="(") { 
-		var lastIndex = lastIndexOf(")", remainder); 
+  }
+
+	if (currentElement==="(") {
+		var lastIndex = lastIndexOf(")", remainder);
 		var element = remainder.slice(0, lastIndex); //element = middle chunk between ()
 		remainder = remainder.slice(lastIndex+1); //now remainder = the rest
 		currentElement=formatArray(element);
@@ -64,19 +69,21 @@ function orderOfOps(formattedArray, inProgressToken) {
 		inProgressToken=[];
 	var input = formattedArray[0];
 	var remainder = formattedArray.slice(1);
-	if(Array.isArray(input))
+	if(Array.isArray(input)) {
 		return [orderOfOps(input)];
-	//end: no more input, no integer in progress	
-	if((input===""|| input==undefined) && inProgressToken.length==0)
-		return []; 
+  }
+
+	//end: no more input, no integer in progress
+	if((input===""|| input==undefined) && inProgressToken.length==0) {
+		return [];
 	//end: input exists but no more remainder
-	else if(input!=="" && remainder=="")
-		return [input]; 
-	//mid: the input exists and current = is a number 
-	else if(input!==""&& !isNaN(input))
+	} else if(input!=="" && remainder=="") {
+		return [input];
+	//mid: the input exists and current = is a number
+	} else if(input!==""&& !isNaN(input)) {
 		return orderOfOps(remainder, inProgressToken.concat([input]));
 	//mid: input exists and current is not a number
-	else if(input!==""&& isNaN(input)){
+ 	} else if(input!==""&& isNaN(input)){
 		if(input=="*" || input =="/") {
 			var token = [inProgressToken.concat(input).concat([remainder[0]])];
 			remainder = remainder.slice(1);
@@ -84,7 +91,7 @@ function orderOfOps(formattedArray, inProgressToken) {
 		}
 		if(input=="+" || input =="-"){
 			return inProgressToken.concat(input).concat(orderOfOps(remainder));
-		}			
+		}
 	}
 
 }
@@ -96,10 +103,12 @@ function doMath(formattedInputArray) {
 	var operator = formattedInputArray[1];
 	var next = formattedInputArray[2];
 	var remainder = formattedInputArray.slice(3);
-	if (Array.isArray(current))
+	if (Array.isArray(current)) {
 		current = doMath(current);
-	if (Array.isArray(next))
+  }
+	if (Array.isArray(next)) {
 		next = doMath(next);
+  }
 	switch (operator) {
 		case "+":
 			var result = parseFloat(current) + parseFloat(next)
@@ -114,8 +123,9 @@ function doMath(formattedInputArray) {
 			var result = parseFloat(current) / parseFloat(next)
 			break;
 	}
-	if (formattedInputArray.length>3)
+	if (formattedInputArray.length>3) {
 		result = doMath([result].concat(remainder));
+  }
 	return result;
 }
 
