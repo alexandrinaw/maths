@@ -41,18 +41,15 @@ function tokenize(input, inProgressToken) {
 function formatArray(lexedArray) {
 	if (lexedArray.length==0) {
 		return [];
+  } else if (lexedArray[0]==="(") {
+	  var rest = lexedArray.slice(1);
+		var lastIndex = lastIndexOf(")", rest);
+		var element = rest.slice(0, lastIndex); //element = middle chunk between ()
+    var restAfterElement = rest.slice(lastIndex+1);
+	  return [formatArray(element)].concat(formatArray(restAfterElement));
+	} else {
+	  return [lexedArray[0]].concat(formatArray(lexedArray.slice(1)));
   }
-
-	var currentElement = lexedArray[0];
-	var remainder = lexedArray.slice(1);
-
-	if (currentElement==="(") {
-		var lastIndex = lastIndexOf(")", remainder);
-		var element = remainder.slice(0, lastIndex); //element = middle chunk between ()
-		remainder = remainder.slice(lastIndex+1); //now remainder = the rest
-		currentElement=formatArray(element);
-	}
-	return([currentElement].concat(formatArray(remainder)));
 }
 
 //helper fn for formatArray/parenthesis search
