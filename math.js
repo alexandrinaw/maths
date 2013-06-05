@@ -1,5 +1,13 @@
 //takes an input string and parses it into a 1d array, keeping digits of a number together and removing white space
 function lex(input, inProgressToken) {
+function removeWhitespace(input) {
+  if (input === "") {
+    return "";
+  } else {
+    var out = input[0] === " " ? "" : input[0];
+    return out + removeWhitespace(input.slice(1));
+  }
+};
 	if (arguments.length==1)
 		inProgressToken=[];	
 	var current = input[0];
