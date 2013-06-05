@@ -19,9 +19,6 @@ function removeWhitespace(input) {
 	//end: no more input, but need to write current integer in progress
 	else if(input==="" && inProgressToken!=="")
 		return [inProgressToken];
-	//mid: white space - skip
-	else if(current===" ")
-		return lex(remainder, inProgressToken)
 	//mid: the input exists and current = is a number (or a .) 
 	else if(input!==""&& (!isNaN(current)|| current==="."))
 		return lex(remainder, inProgressToken + current);	
