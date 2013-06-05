@@ -1,5 +1,8 @@
 //takes an input string and parses it into a 1d array, keeping digits of a number together and removing white space
-function lex(input, inProgressToken) {
+function lex(input) {
+  return tokenize(removeWhitespace(input));
+}
+
 function removeWhitespace(input) {
   if (input === "") {
     return "";
@@ -8,6 +11,8 @@ function removeWhitespace(input) {
     return out + removeWhitespace(input.slice(1));
   }
 };
+
+function tokenize(input, inProgressToken) {
 	if (arguments.length==1)
 		inProgressToken=[];	
 	var current = input[0];
@@ -21,13 +26,13 @@ function removeWhitespace(input) {
 		return [inProgressToken];
 	//mid: the input exists and current = is a number (or a .) 
 	else if(input!==""&& (!isNaN(current)|| current==="."))
-		return lex(remainder, inProgressToken + current);	
+		return tokenize(remainder, inProgressToken + current);
 	//mid: input exists and current is not a number
 	else if(input!==""&& isNaN(current)){
 		if(inProgressToken.length!==0)
 			return [inProgressToken].concat(lex(input, ""));
 		else if(inProgressToken.length===0)
-			return [current].concat(lex(remainder, ""));
+			return [current].concat(tokenize(remainder, ""));
 	}
 }
 //takes an array of numbers/operators and creates a multi-dimensional array when there are parenthesis
