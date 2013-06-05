@@ -17,7 +17,6 @@ function tokenize(input, inProgressToken) {
 		inProgressToken=[];	
 	var current = input[0];
 	var remainder = input.slice(1);		
-	var out =[]; 
 	//end: no more input, no integer in progress	
 	if(input==="" && inProgressToken==="")
 		return []; 
