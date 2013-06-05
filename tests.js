@@ -12,4 +12,10 @@ assert.deepEqual(math.formatArray(afterLex), afterFormat);
 assert.deepEqual(math.orderOfOps(afterFormat), afterOrderOfOps);
 assert.deepEqual(math.doMath(afterOrderOfOps), expectedResult);
 
+// lexer
+
+// whitespace
 assert.deepEqual(math.lex("(  (5 +   1)  /  3  "), ["(", "(", "5", "+", "1", ")", "/", "3"]);
+
+// empty input
+assert.deepEqual(math.lex(""), []);
