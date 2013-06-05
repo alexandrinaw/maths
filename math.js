@@ -57,11 +57,9 @@ function formatArray(lexedArray) {
 
 //helper fn for formatArray/parenthesis search
 function lastIndexOf(number, list) {
-	var listCopy = list.slice(0);
-        if (listCopy.length==0) return -1;
-        var current = listCopy.pop();
-        if (current==number) return listCopy.length;
-        else return lastIndexOf(number, listCopy);
+  if (list.length === 0) return -1;
+  if (list[list.length-1] === number) return list.length - 1;
+  return lastIndexOf(number, list.slice(0, list.length - 1));
 }
 
 function orderOfOps(formattedArray, inProgressToken) {
