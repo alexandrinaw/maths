@@ -43,7 +43,6 @@ function formatArray(lexedArray) {
 		return [];
   }
 
-	var formattedArray = [];
 	var currentElement = lexedArray[0];
 	var remainder = lexedArray.slice(1);
 
