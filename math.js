@@ -13,8 +13,8 @@ function removeWhitespace(input) {
 };
 
 function tokenize(input, inProgressToken) {
-		inProgressToken=[];	
 	if (inProgressToken === undefined)
+		inProgressToken="";
 	var current = input[0];
 	var remainder = input.slice(1);		
 	//end: no more input, no integer in progress	
