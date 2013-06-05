@@ -91,6 +91,13 @@ function orderOfOps(formattedArray, inProgressToken) {
 
 }
 
+var operatorFns = {
+  "+": function(x, y) { return x + y; },
+  "-": function(x, y) { return x - y; },
+  "*": function(x, y) { return x * y; },
+  "/": function(x, y) { return x / y; }
+}
+
 // takes a multi-dimensional array of numbers/operators and performs calculations, returning the result
 function doMath(formattedInputArray) {
 	//formattedInput example: [["2.1", "*", "17"], "-", "3"]
@@ -104,20 +111,7 @@ function doMath(formattedInputArray) {
 	if (Array.isArray(next)) {
 		next = doMath(next);
   }
-	switch (operator) {
-		case "+":
-			var result = parseFloat(current) + parseFloat(next)
-			break;
-		case "-":
-			var result = parseFloat(current) - parseFloat(next)
-			break;
-		case "*":
-			var result = parseFloat(current) * parseFloat(next)
-			break;
-		case "/":
-			var result = parseFloat(current) / parseFloat(next)
-			break;
-	}
+  var result = operatorFns[operator](parseFloat(current), parseFloat(next));
 	if (formattedInputArray.length>3) {
 		result = doMath([result].concat(remainder));
   }
