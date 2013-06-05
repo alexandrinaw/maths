@@ -99,23 +99,15 @@ var operatorFns = {
 }
 
 // takes a multi-dimensional array of numbers/operators and performs calculations, returning the result
-function doMath(formattedInputArray) {
+function doMath(nestedMath) {
 	//formattedInput example: [["2.1", "*", "17"], "-", "3"]
-	var current = formattedInputArray[0];
-	var operator = formattedInputArray[1];
-	var next = formattedInputArray[2];
-	var remainder = formattedInputArray.slice(3);
-	if (Array.isArray(current)) {
-		current = doMath(current);
+  if (nestedMath.length === 0) {
+    return;
   }
-	if (Array.isArray(next)) {
-		next = doMath(next);
-  }
-  var result = operatorFns[operator](parseFloat(current), parseFloat(next));
-	if (formattedInputArray.length>3) {
-		result = doMath([result].concat(remainder));
-  }
-	return result;
+  var operandA = Array.isArray(nestedMath[0]) ? doMath(nestedMath[0]) : nestedMath[0];
+  var operandB = Array.isArray(nestedMath[2]) ? doMath(nestedMath[2]) : nestedMath[2];
+	var operator = nestedMath[1];
+  return operatorFns[operator](parseFloat(operandA), parseFloat(operandB));
 }
 
 exports.lex=lex;
