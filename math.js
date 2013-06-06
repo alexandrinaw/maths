@@ -1,5 +1,5 @@
 function maths(input) {
-    return (orderOfOps(formatArray(lex(input)))));
+    return (doMath(orderOfOps(formatArray(lex(input)))));
 }
 
 //takes an input string and parses it into a 1d array, keeping digits of a number together and removing white space
@@ -56,35 +56,73 @@ function lastIndexOf(number, list) {
   return lastIndexOf(number, list.slice(0, list.length - 1));
 }
 
-function orderOfOps(formattedArray, inProgressToken) {
-	if (arguments.length==1)
-		inProgressToken=[];
-	var input = formattedArray[0];
-	var remainder = formattedArray.slice(1);
-	if(Array.isArray(input)) {
-		return [orderOfOps(input)];
-	}
-	//end: no more input, no integer in progress	
-	if((input==undefined))
-		return inProgressToken; 
-	//end: input exists but no more remainder
-	else if(input!=="" && remainder=="")
-		return [input];
-	//mid: the input exists and input is a number 
-	else if(input!==""&& !isNaN(input))
-		return orderOfOps(remainder, inProgressToken.concat([input]));
-	//mid: input exists and input is not a number
-	else if(input!==""&& isNaN(input)){
-		if(input=="*" || input =="/") {
-			var token = [inProgressToken.concat(input).concat([remainder[0]])];
-			remainder = remainder.slice(1);
-			return (orderOfOps(remainder, token));
-		}
-		if(input=="+" || input =="-"){
-			return inProgressToken.concat(input).concat(orderOfOps(remainder));
-		}
-	}
+var operatorVals = {
+  "+":1, 
+  "-":2,
+  "*":3, 
+  "/":4 
 }
+
+function compOps(a, b) {
+    return (operatorVals[a]-operatorVals[b]);
+}
+
+function orderOfOps(input) {
+    //input: ["4", "+", "5", "*", "7"]
+    //output: ["4", "+", ["5", "*", "7"]]]
+
+    //input: ["4", "*", "5", "+", "7"]
+    //output: [["4", "*", "5"], "+", "7"]]
+    var first = input[0];
+    var op1 = input[1];
+    var second = input[2];
+    var op2=input[3];
+    var rest = input.slice(3);
+    if (input.length===3){
+        if (Array.isArray(first)) 
+            first = orderOfOps(first);
+        if (Array.isArray(second))
+            second = orderOfOps(second);
+        return [first].concat(op1, [second]); 
+    }
+    if(compOps(op1, op2)<0){
+        return ([first].concat(op1).concat([orderOfOps(input.slice(2))]))
+    }
+    else {
+        var element = [first].concat([op1, second])
+        return (orderOfOps([element].concat(rest)));
+    }
+}
+
+//function orderOfOps(formattedArray, inProgressToken) {
+//	if (arguments.length==1)
+//		inProgressToken=[];
+//	var input = formattedArray[0];
+//	var remainder = formattedArray.slice(1);
+//	if(Array.isArray(input)) {
+//		return [orderOfOps(input)];
+//	}
+//	//end: no more input, no integer in progress	
+//	if((input==undefined))
+//		return inProgressToken; 
+//	//end: input exists but no more remainder
+//	else if(input!=="" && remainder=="")
+//		return [input];
+//	//mid: the input exists and input is a number 
+//	else if(input!==""&& !isNaN(input))
+//		return orderOfOps(remainder, inProgressToken.concat([input]));
+//	//mid: input exists and input is not a number
+//	else if(input!==""&& isNaN(input)){
+//		if(input=="*" || input =="/") {
+//			var token = [inProgressToken.concat(input).concat([remainder[0]])];
+//			remainder = remainder.slice(1);
+//			return (orderOfOps(remainder, token));
+//		}
+//		if(input=="+" || input =="-"){
+//            return inProgressToken.concat(input).concat(orderOfOps(remainder));
+//		}
+//	}
+//}
 
 var operatorFns = {
   "+": function(x, y) { return x + y; },
@@ -99,13 +137,15 @@ function doMath(nestedMath) {
   if (nestedMath.length === 0) {
     return;
   }
-  if (nestedMath.length===1) {
-    return nestedMath[0];
-  }
   var operandA = Array.isArray(nestedMath[0]) ? doMath(nestedMath[0]) : nestedMath[0];
   var operandB = Array.isArray(nestedMath[2]) ? doMath(nestedMath[2]) : nestedMath[2];
   var operator = nestedMath[1];
-  return operatorFns[operator](parseFloat(operandA), parseFloat(operandB));
+  if (operator===undefined)
+    return operandA;
+  var result = operatorFns[operator](parseFloat(operandA), parseFloat(operandB));
+  if (nestedMath.length>3)
+    result=doMath([result].concat(nestedMath.slice(3)));
+  return result;
 }
 
 exports.lex=lex;
