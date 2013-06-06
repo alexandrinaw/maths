@@ -1,3 +1,7 @@
+function maths(input) {
+	return(doMath(orderOfOps(formatArray(lex(input)))));
+}
+
 //takes an input string and parses it into a 1d array, keeping digits of a number together and removing white space
 function lex(input, inProgressToken) {
 	if (arguments.length==1)
@@ -58,26 +62,26 @@ function orderOfOps(formattedArray, inProgressToken) {
 	if(Array.isArray(input))
 		return [orderOfOps(input)];
 	//end: no more input, no integer in progress	
-	if((input===""|| input==undefined) && inProgressToken.length==0)
-		return []; 
+	if((input==undefined))
+		return inProgressToken; 
 	//end: input exists but no more remainder
 	else if(input!=="" && remainder=="")
-		return [input]; 
-	//mid: the input exists and current = is a number 
+		return [input];
+	//mid: the input exists and input is a number 
 	else if(input!==""&& !isNaN(input))
 		return orderOfOps(remainder, inProgressToken.concat([input]));
-	//mid: input exists and current is not a number
+	//mid: input exists and input is not a number
 	else if(input!==""&& isNaN(input)){
 		if(input=="*" || input =="/") {
 			var token = [inProgressToken.concat(input).concat([remainder[0]])];
 			remainder = remainder.slice(1);
-			return token.concat(orderOfOps(remainder));
+			console.log(token);
+			return (orderOfOps(remainder, token));
 		}
 		if(input=="+" || input =="-"){
 			return inProgressToken.concat(input).concat(orderOfOps(remainder));
 		}			
 	}
-
 }
 
 // takes a multi-dimensional array of numbers/operators and performs calculations, returning the result
@@ -89,6 +93,8 @@ function doMath(formattedInputArray) {
 	var remainder = formattedInputArray.slice(3);
 	if (Array.isArray(current))
 		current = doMath(current);
+	if(operator===undefined)
+		return current;
 	if (Array.isArray(next))
 		next = doMath(next);
 	switch (operator) {
@@ -114,3 +120,4 @@ exports.lex=lex;
 exports.doMath=doMath;
 exports.formatArray=formatArray;
 exports.orderOfOps=orderOfOps;
+exports.maths=maths;
