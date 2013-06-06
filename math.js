@@ -1,4 +1,5 @@
-fundoMath(orderOfOps(formatArray(lex(input)))));
+function maths(input) {
+    return (orderOfOps(formatArray(lex(input)))));
 }
 
 //takes an input string and parses it into a 1d array, keeping digits of a number together and removing white space
