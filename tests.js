@@ -12,6 +12,7 @@ assert.deepEqual(math.formatArray(afterLex), afterFormat);
 assert.deepEqual(math.orderOfOps(afterFormat), afterOrderOfOps);
 assert.deepEqual(math.doMath(afterOrderOfOps), expectedResult);
 
+<<<<<<< HEAD
 var a="2*3*4*5";
 var b=["2", "*", "3", "*", "4", "*", "5"];
 var c=["2", "*", "3", "*", "4", "*", "5"];
@@ -26,3 +27,12 @@ var afterLex2=["17", "*", "3", "-", "(", "9", "/", "(", "2", "+", "1", ")", ")",
 var afterFormat2=["17", "*", "3", "-",[ "9", "/",[ "2", "+", "1"]], "-", "6"];
 
 var afterOrderOfOps2 = [["17", "*", "3"], "-",[ "9", "/",[ "2", "+", "1"]], "-", "6"];
+=======
+// lexer
+
+// whitespace
+assert.deepEqual(math.lex("(  (5 +   1)  /  3  "), ["(", "(", "5", "+", "1", ")", "/", "3"]);
+
+// empty input
+assert.deepEqual(math.lex(""), []);
+>>>>>>> f013ff320813556e65c16678db471743b486c1d4

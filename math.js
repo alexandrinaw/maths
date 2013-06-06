@@ -1,57 +1,58 @@
-function maths(input) {
-	return(doMath(orderOfOps(formatArray(lex(input)))));
+fundoMath(orderOfOps(formatArray(lex(input)))));
 }
 
 //takes an input string and parses it into a 1d array, keeping digits of a number together and removing white space
-function lex(input, inProgressToken) {
-	if (arguments.length==1)
-		inProgressToken=[];	
-	var current = input[0];
-	var remainder = input.slice(1);		
-	var out =[]; 
-	//end: no more input, no integer in progress	
-	if(input==="" && inProgressToken==="")
-		return []; 
-	//end: no more input, but need to write current integer in progress
-	else if(input==="" && inProgressToken!=="")
-		return [inProgressToken];
-	//mid: white space - skip
-	else if(current===" ")
-		return lex(remainder, inProgressToken)
-	//mid: the input exists and current = is a number (or a .) 
-	else if(input!==""&& (!isNaN(current)|| current==="."))
-		return lex(remainder, inProgressToken + current);	
-	//mid: input exists and current is not a number
-	else if(input!==""&& isNaN(current)){
-		if(inProgressToken.length!==0)
-			return [inProgressToken].concat(lex(input, ""));
-		else if(inProgressToken.length===0)
-			return [current].concat(lex(remainder, ""));
-	}
+function lex(input) {
+  return tokenize(removeWhitespace(input));
+}
+
+function removeWhitespace(input) {
+  if (input === "") {
+    return "";
+  } else {
+    var out = input[0] === " " ? "" : input[0];
+    return out + removeWhitespace(input.slice(1));
+  }
+};
+
+var isPartOfMultiCharToken = function(charStr) {
+  return charStr !== undefined && (!isNaN(charStr) || charStr === ".");
+};
+
+function tokenize(input, inProgressToken) {
+  if (input.length === 0) {
+    return [];
+  } else if (isPartOfMultiCharToken(input[0])) {
+    inProgressToken = (inProgressToken || "") + input[0];
+    if (isPartOfMultiCharToken(input[1])) {
+      return tokenize(input.slice(1), inProgressToken);
+    } else {
+      return [inProgressToken].concat(tokenize(input.slice(1)));
+    }
+  } else {
+    return [input[0]].concat(tokenize(input.slice(1)));
+  }
 }
 //takes an array of numbers/operators and creates a multi-dimensional array when there are parenthesis
 function formatArray(lexedArray) {
-	var formattedArray = [];
-	var currentElement = lexedArray[0];
-	var remainder = lexedArray.slice(1);
-	if (lexedArray.length==0)
-		return [];
-	if (currentElement==="(") { 
-		var lastIndex = lastIndexOf(")", remainder); 
-		var element = remainder.slice(0, lastIndex); //element = middle chunk between ()
-		remainder = remainder.slice(lastIndex+1); //now remainder = the rest
-		currentElement=formatArray(element);
-	}
-	return([currentElement].concat(formatArray(remainder)));
+  if (lexedArray.length==0) {
+	return [];
+  } else if (lexedArray[0]==="(") {
+    var rest = lexedArray.slice(1);
+    var lastIndex = lastIndexOf(")", rest);
+    var element = rest.slice(0, lastIndex); //element = middle chunk between ()
+    var restAfterElement = rest.slice(lastIndex+1);
+    return [formatArray(element)].concat(formatArray(restAfterElement));
+  } else {
+    return [lexedArray[0]].concat(formatArray(lexedArray.slice(1)));
+  }
 }
 
 //helper fn for formatArray/parenthesis search
 function lastIndexOf(number, list) {
-	var listCopy = list.slice(0);
-        if (listCopy.length==0) return -1;
-        var current = listCopy.pop();
-        if (current==number) return listCopy.length;
-        else return lastIndexOf(number, listCopy);
+  if (list.length === 0) return -1;
+  if (list[list.length-1] === number) return list.length - 1;
+  return lastIndexOf(number, list.slice(0, list.length - 1));
 }
 
 function orderOfOps(formattedArray, inProgressToken) {
@@ -59,8 +60,9 @@ function orderOfOps(formattedArray, inProgressToken) {
 		inProgressToken=[];
 	var input = formattedArray[0];
 	var remainder = formattedArray.slice(1);
-	if(Array.isArray(input))
+	if(Array.isArray(input)) {
 		return [orderOfOps(input)];
+	}
 	//end: no more input, no integer in progress	
 	if((input==undefined))
 		return inProgressToken; 
@@ -75,45 +77,34 @@ function orderOfOps(formattedArray, inProgressToken) {
 		if(input=="*" || input =="/") {
 			var token = [inProgressToken.concat(input).concat([remainder[0]])];
 			remainder = remainder.slice(1);
-			console.log(token);
 			return (orderOfOps(remainder, token));
 		}
 		if(input=="+" || input =="-"){
 			return inProgressToken.concat(input).concat(orderOfOps(remainder));
-		}			
+		}
 	}
 }
 
+var operatorFns = {
+  "+": function(x, y) { return x + y; },
+  "-": function(x, y) { return x - y; },
+  "*": function(x, y) { return x * y; },
+  "/": function(x, y) { return x / y; }
+}
+
 // takes a multi-dimensional array of numbers/operators and performs calculations, returning the result
-function doMath(formattedInputArray) {
-	//formattedInput example: [["2.1", "*", "17"], "-", "3"]
-	var current = formattedInputArray[0];
-	var operator = formattedInputArray[1];
-	var next = formattedInputArray[2];
-	var remainder = formattedInputArray.slice(3);
-	if (Array.isArray(current))
-		current = doMath(current);
-	if(operator===undefined)
-		return current;
-	if (Array.isArray(next))
-		next = doMath(next);
-	switch (operator) {
-		case "+":
-			var result = parseFloat(current) + parseFloat(next)
-			break;
-		case "-":
-			var result = parseFloat(current) - parseFloat(next)
-			break;
-		case "*":
-			var result = parseFloat(current) * parseFloat(next)
-			break;
-		case "/":
-			var result = parseFloat(current) / parseFloat(next)
-			break;
-	}
-	if (formattedInputArray.length>3)
-		result = doMath([result].concat(remainder));
-	return result;
+function doMath(nestedMath) {
+  //formattedInput example: [["2.1", "*", "17"], "-", "3"]
+  if (nestedMath.length === 0) {
+    return;
+  }
+  if (nestedMath.length===1) {
+    return nestedMath[0];
+  }
+  var operandA = Array.isArray(nestedMath[0]) ? doMath(nestedMath[0]) : nestedMath[0];
+  var operandB = Array.isArray(nestedMath[2]) ? doMath(nestedMath[2]) : nestedMath[2];
+  var operator = nestedMath[1];
+  return operatorFns[operator](parseFloat(operandA), parseFloat(operandB));
 }
 
 exports.lex=lex;
