@@ -40,27 +40,35 @@ function formatArray(lexedArray) {
 	return [];
   } else if (lexedArray[0]==="(") {
     var rest = lexedArray.slice(1);
-    var lastIndex = lastIndexOf(")", rest);
-    var element = rest.slice(0, lastIndex); //element = middle chunk between ()
-    var restAfterElement = rest.slice(lastIndex+1);
+    var count=0;
+    var element;
+    var restAfterElement;
+    for (var i=0; i<rest.length; i++) {
+        var current = rest[i]; 
+        if (current==="("){
+            count++;
+        }
+        else if (current ===")" && count==0){
+            element=rest.slice(0, i);
+            restAfterElement = rest.slice(i+1);
+            break;
+        }
+        else if (current===")"){
+            count--;
+        }
+    }
     return [formatArray(element)].concat(formatArray(restAfterElement));
   } else {
     return [lexedArray[0]].concat(formatArray(lexedArray.slice(1)));
   }
 }
 
-//helper fn for formatArray/parenthesis search
-function lastIndexOf(number, list) {
-  if (list.length === 0) return -1;
-  if (list[list.length-1] === number) return list.length - 1;
-  return lastIndexOf(number, list.slice(0, list.length - 1));
-}
-
 var operatorVals = {
   "+":1, 
   "-":2,
   "*":3, 
-  "/":4 
+  "/":4,
+  "^":5
 }
 
 function compOps(a, b) {
@@ -78,10 +86,15 @@ function orderOfOps(input) {
     var second = input[2];
     var op2=input[3];
     var rest = input.slice(3);
+    if (input.length===1){
+        if(Array.isArray(first))
+            return orderOfOps(first);
+        else return first;
+    }
     if (input.length===3){
-        if (Array.isArray(first)) 
+        if (Array.isArray(first)&&first.length!==1) 
             first = orderOfOps(first);
-        if (Array.isArray(second))
+        if (Array.isArray(second)&&second.length!==1)
             second = orderOfOps(second);
         return [first].concat(op1, [second]); 
     }
@@ -94,41 +107,12 @@ function orderOfOps(input) {
     }
 }
 
-//function orderOfOps(formattedArray, inProgressToken) {
-//	if (arguments.length==1)
-//		inProgressToken=[];
-//	var input = formattedArray[0];
-//	var remainder = formattedArray.slice(1);
-//	if(Array.isArray(input)) {
-//		return [orderOfOps(input)];
-//	}
-//	//end: no more input, no integer in progress	
-//	if((input==undefined))
-//		return inProgressToken; 
-//	//end: input exists but no more remainder
-//	else if(input!=="" && remainder=="")
-//		return [input];
-//	//mid: the input exists and input is a number 
-//	else if(input!==""&& !isNaN(input))
-//		return orderOfOps(remainder, inProgressToken.concat([input]));
-//	//mid: input exists and input is not a number
-//	else if(input!==""&& isNaN(input)){
-//		if(input=="*" || input =="/") {
-//			var token = [inProgressToken.concat(input).concat([remainder[0]])];
-//			remainder = remainder.slice(1);
-//			return (orderOfOps(remainder, token));
-//		}
-//		if(input=="+" || input =="-"){
-//            return inProgressToken.concat(input).concat(orderOfOps(remainder));
-//		}
-//	}
-//}
-
 var operatorFns = {
   "+": function(x, y) { return x + y; },
   "-": function(x, y) { return x - y; },
   "*": function(x, y) { return x * y; },
-  "/": function(x, y) { return x / y; }
+  "/": function(x, y) { return x / y; },
+  "^": function(x, y) { return Math.pow(x, y)}
 }
 
 // takes a multi-dimensional array of numbers/operators and performs calculations, returning the result
