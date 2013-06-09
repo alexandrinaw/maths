@@ -1,0 +1,34 @@
+#math_stuff{
+    text-align: center;
+	margin-top: 20px;
+}
+#title{
+	text-align: center;
+	font-size: 40px; 
+	margin-top: 30px; 
+}
+
+#operators div{
+	display: inline-table;
+	width:40px; 
+	margin:5px;
+	height:40px;
+	font-size:30px;
+	background-color:#00ff00;
+}
+
+#numbers div{
+	width:40px; 
+	margin:5px;
+	height:40px;
+	background-color:#00ffff;
+	font-size:30px;
+	display: inline-table;
+}
+
+#operators {
+}
+
+#numbers {
+
+}

@@ -14,7 +14,7 @@ function removeWhitespace(input) {
     var out = input[0] === " " ? "" : input[0];
     return out + removeWhitespace(input.slice(1));
   }
-};
+}
 
 var isPartOfMultiCharToken = function(charStr) {
   return charStr !== undefined && (!isNaN(charStr) || charStr === ".");
@@ -36,7 +36,7 @@ function tokenize(input, inProgressToken) {
 }
 //takes an array of numbers/operators and creates a multi-dimensional array when there are parenthesis
 function formatArray(lexedArray) {
-  if (lexedArray.length==0) {
+  if (lexedArray.length===0) {
 	return [];
   } else if (lexedArray[0]==="(") {
     var rest = lexedArray.slice(1);
@@ -48,7 +48,7 @@ function formatArray(lexedArray) {
         if (current==="("){
             count++;
         }
-        else if (current ===")" && count==0){
+        else if (current ===")" && count===0){
             element=rest.slice(0, i);
             restAfterElement = rest.slice(i+1);
             break;
@@ -69,7 +69,7 @@ var operatorVals = {
   "*":3, 
   "/":4,
   "^":5
-}
+};
 
 function compOps(a, b) {
     return (operatorVals[a]-operatorVals[b]);
@@ -99,10 +99,10 @@ function orderOfOps(input) {
         return [first].concat(op1, [second]); 
     }
     if(compOps(op1, op2)<0){
-        return ([first].concat(op1).concat([orderOfOps(input.slice(2))]))
+        return ([first].concat(op1).concat([orderOfOps(input.slice(2))]));
     }
     else {
-        var element = [first].concat([op1, second])
+        var element = [first].concat([op1, second]);
         return (orderOfOps([element].concat(rest)));
     }
 }
@@ -113,7 +113,7 @@ var operatorFns = {
   "*": function(x, y) { return x * y; },
   "/": function(x, y) { return x / y; },
   "^": function(x, y) { return Math.pow(x, y)}
-}
+};
 
 // takes a multi-dimensional array of numbers/operators and performs calculations, returning the result
 function doMath(nestedMath) {
