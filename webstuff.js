@@ -2,16 +2,13 @@ window.onload = function() {
     document.getElementById("calculate").onclick=function(){
 		displayResults();
 	};
-
 	document.getElementById("input_box").onkeypress=function(){
 		if(window.event.keyCode==13)
 			displayResults();
-	}
+	};
 	createNumbers();
 	["+", "-", "*", "/", "^"].forEach(createOperators);
-
-}
-
+};
 function displayResults() {
 	var expression = document.getElementById("input_box").value;
 	var maths_results = maths(expression);
@@ -23,12 +20,11 @@ function displayResults() {
 	else{
 		document.getElementById("result").innerHTML =maths_results;
 		document.getElementById("result_text").innerHTML = "" + expression + " = "; 
-		
 	}
 }
 
 function createNumbers() {
-	for (i=0; i<10; i++) {
+	for (var i=0; i<10; i++) {
 		var newNumber = document.createElement("div");
 		newNumber.innerHTML = i;
 		var br = document.createElement("br"); 
@@ -38,7 +34,6 @@ function createNumbers() {
 		document.getElementById("numbers").appendChild(newNumber);
 		if (i===4)
 		document.getElementById("numbers").appendChild(br);
-
 	}
 }
 
