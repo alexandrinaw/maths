@@ -89,7 +89,7 @@ function orderOfOps(input) {
     if (input.length===1){
         if(Array.isArray(first))
             return orderOfOps(first);
-        else return first;
+        else return [first];
     }
     if (input.length===3){
         if (Array.isArray(first)&&first.length!==1) 
